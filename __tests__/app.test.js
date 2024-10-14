@@ -20,7 +20,7 @@ describe("tests GET bad URLs", () => {
 });
 
 describe("tests endpoint /api/topics", () => {
-  test("GET: 200 /api/topics returns an array containg all topics, with properties 'slug' and 'description", () => {
+  test("GET: 200 /api/topics returns an array containing all topics, with properties 'slug' and 'description", () => {
     return request(app)
       .get("/api/topics")
       .expect(200)
@@ -44,6 +44,43 @@ describe("test endpoint /api", () => {
       .expect(200)
       .then(({ body }) => {
         expect(body.endpoints).toEqual(jsonEndpoints);
+      });
+  });
+});
+
+describe("tests endpoint /api/articles/:article_id", () => {
+  test("GET: 200 responds with the correct article object, with the correct properties", () => {
+    return request(app)
+      .get("/api/articles/2")
+      .expect(200)
+      .then(({ body: { article } }) => {
+        expect(article.article_id).toBe(2);
+        expect(article).toMatchObject({
+          article_id: expect.any(Number),
+          title: expect.any(String),
+          topic: expect.any(String),
+          author: expect.any(String),
+          body: expect.any(String),
+          created_at: expect.any(String),
+          votes: expect.any(Number),
+          article_img_url: expect.any(String),
+        });
+      });
+  });
+  test("GET: 404 responds with 'Not Found' when request is made with a valid but non-existent id", () => {
+    return request(app)
+      .get("/api/articles/500")
+      .expect(404)
+      .then(({ body : { msg } }) => {
+        expect(msg).toBe("Article does not exist");
+      });
+  });
+  test("GET: 400 responds with a valid error message when request is made with an invalid id", () => {
+    return request(app)
+      .get("/api/articles/not-a-number")
+      .expect(400)
+      .then(({ body : { msg } }) => {
+        expect(msg).toBe("Bad request");
       });
   });
 });
