@@ -3,8 +3,7 @@ const request = require("supertest");
 const db = require("../db/connection");
 const seed = require("../db/seeds/seed");
 const data = require("../db/data/test-data");
-const jsonEndpoints = require("../endpoints.json")
-
+const jsonEndpoints = require("../endpoints.json");
 
 beforeEach(() => seed(data));
 afterAll(() => db.end());
@@ -21,27 +20,13 @@ describe("tests GET bad URLs", () => {
 });
 
 describe("tests endpoint /api/topics", () => {
-  test("GET: 200 /api/topics returns an array", () => {
+  test("GET: 200 /api/topics returns an array containg all topics, with properties 'slug' and 'description", () => {
     return request(app)
       .get("/api/topics")
       .expect(200)
       .then(({ body: { topics } }) => {
-        expect(Array.isArray(topics)).toBe(true);
-      });
-  });
-  test("GET: 200 /api/topics array contains the right number of topics", () => {
-    return request(app)
-      .get("/api/topics")
-      .expect(200)
-      .then(({ body: { topics } }) => {
+        expect(topics).toBeInstanceOf(Array);
         expect(topics.length).toBe(3);
-      });
-  });
-  test("GET: 200 /api/topics array contents have the properties 'slug' and 'description'", () => {
-    return request(app)
-      .get("/api/topics")
-      .expect(200)
-      .then(({ body: { topics } }) => {
         topics.forEach((topic) => {
           expect(topic).toMatchObject({
             slug: expect.any(String),
@@ -52,13 +37,13 @@ describe("tests endpoint /api/topics", () => {
   });
 });
 
-describe("test endpoint /api", ()=> {
-    test("GET: 200 responds with an object containing all available endpoints", () => {
-        return request(app)
-        .get("/api")
-        .expect(200)
-        .then(( { body } ) => {
-            expect(body.endpoints).toEqual(jsonEndpoints)
-        })
-    })
-})
+describe("test endpoint /api", () => {
+  test("GET: 200 responds with an object containing all available endpoints", () => {
+    return request(app)
+      .get("/api")
+      .expect(200)
+      .then(({ body }) => {
+        expect(body.endpoints).toEqual(jsonEndpoints);
+      });
+  });
+});
