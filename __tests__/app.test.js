@@ -3,12 +3,14 @@ const request = require("supertest");
 const db = require("../db/connection");
 const seed = require("../db/seeds/seed");
 const data = require("../db/data/test-data");
+const jsonEndpoints = require("../endpoints.json")
+
 
 beforeEach(() => seed(data));
 afterAll(() => db.end());
 
-describe("GET - tests bad URLs", () => {
-  test("404 - GET /badURL returns a 404 error code and a mesage of 'Not Found'", () => {
+describe("tests GET bad URLs", () => {
+  test("GET: 404 /badURL returns a 404 error code and a mesage of 'Not Found'", () => {
     return request(app)
       .get("/badURL")
       .expect(404)
@@ -19,7 +21,7 @@ describe("GET - tests bad URLs", () => {
 });
 
 describe("tests endpoint /api/topics", () => {
-  test("200 - GET /api/topics returns an array", () => {
+  test("GET: 200 /api/topics returns an array", () => {
     return request(app)
       .get("/api/topics")
       .expect(200)
@@ -27,7 +29,7 @@ describe("tests endpoint /api/topics", () => {
         expect(Array.isArray(topics)).toBe(true);
       });
   });
-  test("200 - GET /api/topics array contains the right number of topics", () => {
+  test("GET: 200 /api/topics array contains the right number of topics", () => {
     return request(app)
       .get("/api/topics")
       .expect(200)
@@ -35,7 +37,7 @@ describe("tests endpoint /api/topics", () => {
         expect(topics.length).toBe(3);
       });
   });
-  test("200 - GET /api/topics array contents have the properties 'slug' and 'description'", () => {
+  test("GET: 200 /api/topics array contents have the properties 'slug' and 'description'", () => {
     return request(app)
       .get("/api/topics")
       .expect(200)
@@ -49,3 +51,14 @@ describe("tests endpoint /api/topics", () => {
       });
   });
 });
+
+describe("test endpoint /api", ()=> {
+    test("GET: 200 responds with an object containing all available endpoints", () => {
+        return request(app)
+        .get("/api")
+        .expect(200)
+        .then(( { body } ) => {
+            expect(body.endpoints).toEqual(jsonEndpoints)
+        })
+    })
+})
