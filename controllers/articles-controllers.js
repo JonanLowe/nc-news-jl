@@ -2,11 +2,13 @@ const {
   selectArticles,
   selectArticleById,
 } = require("../models/articles-models");
+const { countCommentsByArticle_id } = require("../models/comments-models");
 
 exports.getArticles = (request, response, next) => {
   selectArticles()
     .then((articles) => {
       return articles.map((article) => {
+        article.comment_count = Number(article.comment_count);
         delete article.body;
         return article;
       });
