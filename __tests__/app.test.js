@@ -71,7 +71,7 @@ describe("tests endpoint /api/articles/:article_id", () => {
     return request(app)
       .get("/api/articles/500")
       .expect(404)
-      .then(({ body : { msg } }) => {
+      .then(({ body: { msg } }) => {
         expect(msg).toBe("Article does not exist");
       });
   });
@@ -79,8 +79,33 @@ describe("tests endpoint /api/articles/:article_id", () => {
     return request(app)
       .get("/api/articles/not-a-number")
       .expect(400)
-      .then(({ body : { msg } }) => {
+      .then(({ body: { msg } }) => {
         expect(msg).toBe("Bad request");
+      });
+  });
+});
+
+describe("tests endpoint /api/articles", () => {
+  test("GET: 200 /api/articles returns an array containing all article objects, with the correct properties including no 'body' property, sorted by date in descending order", () => {
+    return request(app)
+      .get("/api/articles")
+      .expect(200)
+      .then(({ body: { articles } }) => {
+        expect(articles).toBeInstanceOf(Array);
+        expect(articles.length).toBe(13);
+        expect(articles).toBeSortedBy("created_at", { descending: true });
+        articles.forEach((article) => {
+          expect(article).not.toHaveProperty("body");
+          expect(article).toMatchObject({
+            article_id: expect.any(Number),
+            article_img_url: expect.any(String),
+            author: expect.any(String),
+            created_at: expect.any(String),
+            title: expect.any(String),
+            topic: expect.any(String),
+            votes: expect.any(Number),
+          });
+        });
       });
   });
 });
