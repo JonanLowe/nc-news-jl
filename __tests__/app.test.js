@@ -104,6 +104,7 @@ describe("tests endpoint /api/articles", () => {
             title: expect.any(String),
             topic: expect.any(String),
             votes: expect.any(Number),
+            comment_count: expect.any(Number),
           });
         });
       });
