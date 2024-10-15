@@ -1,0 +1,89 @@
+ticket 1 setup project
+/ git branch
+/ set up .envs
+/ change readme
+/ commit, push, pull
+
+ticket 2 get api/topics
+
+set up test suite
+/    install jest
+/    install supertest
+/    require in necessaries
+/       app
+/       supertest
+/       db
+/       seed
+/       data
+/    beforeeach/afterall
+    test first endpoint /api/topics
+//        200 status
+//        returns an array
+        array contains objects
+        objects have correct properties
+
+create app.js
+/    install & require express
+/    create express app
+/    require controllers
+/    app.get 1st endpoint to test
+/        /api/topics, controllers
+/    ERROR HANDLING CHAIN:
+/        404 (start of chain - one function to rule them all)
+/        500 (catch-all end of chain)
+
+/ create controllers folder
+/ create topics-controllers.js
+/ export & create controller for /api/topics   
+    invokes the model
+
+/create models folder
+/ create topics-models.js
+/ imnport database
+/    export & create model for /api/topics
+/    request and return all topics
+
+ticket 3 get /api
+/   update test file to measure against endpoints.json
+/   update app to return status 200 and endpoints.json when GET: /api 
+
+ticket 4 GET /api/articles/:article_id
+/    update app to include apt. endpoint
+/        import controller function
+/    create articles controller
+/        update controller 
+/        include error catch
+/        import model function
+/        correct response 
+/   create articles models
+/        update model with request using $ syntax
+/        avoid sql sql injection
+/       export model function
+/    ? check test for 404 still works
+/    test for 404 - not found when request out of number range
+/    test for 400 - bad request when wrong data type
+
+ticket 5 GET api/articles/
+/    update test suite
+/        200 status
+/        all articles
+/        artciles sorted by date descending
+/        no body property
+/            ERRORS: n/a
+
+   update endpoints.json
+
+/   update app to include apt. endpoint
+/        import controller function
+/    update controller function
+/        import model
+/        invoke model
+/        catch errors
+/        export controller
+/    update model function
+/        export model
+/           all articles
+/            artciles sorted by date descending
+/            no body property
+
+
