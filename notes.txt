@@ -91,3 +91,30 @@ ticket 5 GET api/articles/
 /            no body property
 
 
+ticket 6 GET api/articles/:article_id/comments
+    update test suite
+/       200 status
+/        all comments by article ID
+/        properties:
+/            comment_id
+/            votes
+/            created_at
+/            author
+/            body
+/            article_id
+/        comments sorted by most recent first
+/    update app 
+/       import controller
+/            invoke controller
+/    create controller (comments)
+/        export function
+/            getCommentsyBtArticleId
+/        import model
+/    create model (comments)
+/        export function
+/            selectCommentsByArticleId
+/    errors:
+/        400
+/        404
+    update endpoints.json
+
