@@ -59,7 +59,8 @@ ticket 4 GET /api/articles/:article_id
 /        update model with request using $ syntax
 /        avoid sql sql injection
 /       export model function
-/    ? check test for 404 still works
+/     check test for 404 still works
+
 /    test for 404 - not found when request out of number range
 /    test for 400 - bad request when wrong data type
 
@@ -69,10 +70,13 @@ ticket 5 GET api/articles/
 /        all articles
 /        artciles sorted by date descending
 /        no body property
-/            ERRORS: n/a
 
-   update endpoints.json
-
+/        comment count:
+/            JOIN COMMENTS TO ARTICLES BY ARTICLE id
+/            COUNT COMMENTS
+/            GROUP BY ARTICLE ID
+/        ERRORS: n/a
+//  update endpoints.json
 /   update app to include apt. endpoint
 /        import controller function
 /    update controller function

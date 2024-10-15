@@ -2,7 +2,6 @@ const {
   selectArticles,
   selectArticleById,
 } = require("../models/articles-models");
-const { countCommentsByArticle_id } = require("../models/comments-models");
 
 exports.getArticles = (request, response, next) => {
   selectArticles()
