@@ -67,12 +67,12 @@ describe("tests endpoint /api/articles/:article_id", () => {
         });
       });
   });
-  test("GET: 404 responds with 'Not Found' when request is made with a valid but non-existent id", () => {
+  test("GET: 404 responds with 'Article Not Found' when request is made with a valid but non-existent id", () => {
     return request(app)
       .get("/api/articles/500")
       .expect(404)
       .then(({ body: { msg } }) => {
-        expect(msg).toBe("Article does not exist");
+        expect(msg).toBe("Article Not Found");
       });
   });
   test("GET: 400 responds with a valid error message when request is made with an invalid id", () => {
@@ -132,15 +132,24 @@ describe("tests endpoint api/articles/:article_id/comments", () => {
         });
       });
   });
-  test("GET: 404 responds with 'Not Found' when request is made with a valid but non-existent article id", () => {
+  test("GET: 200 /api/articles/:article_id/comments serves an empty array when passed a valid article with no comments", () => {
+    return request(app)
+      .get("/api/articles/2/comments")
+      .expect(200)
+      .then(({ body: { comments } }) => {
+        expect(comments).toBeInstanceOf(Array);
+        expect(comments).toHaveLength(0);
+      });
+  });
+  test("GET: 404 responds with 'Article Not Found' when request is made with a valid but non-existent article id", () => {
     return request(app)
       .get("/api/articles/500/comments")
       .expect(404)
       .then(({ body: { msg } }) => {
-        expect(msg).toBe("No comments available: Article does not exist");
+        expect(msg).toBe("Article Not Found");
       });
   });
-  test.only("GET: 400 responds with a valid error message when request is made with an invalid id", () => {
+  test("GET: 400 responds with a valid error message when request is made with an invalid id", () => {
     return request(app)
       .get("/api/articles/not-a-number/comments")
       .expect(400)
