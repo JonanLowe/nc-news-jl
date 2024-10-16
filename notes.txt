@@ -150,7 +150,6 @@ app.post("/api/articles/:article_id/comments", postCommentByArticleId);
 /          update models
 /          export function
 
-
-    update endpoint.json
+/    update endpoint.json
 
 
