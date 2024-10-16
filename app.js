@@ -2,6 +2,8 @@ const express = require("express");
 const app = express();
 const endpoints = require("./endpoints.json");
 
+app.use(express.json());
+
 const { getTopics } = require("./controllers/topics-controllers");
 const {
   getArticles,
@@ -9,6 +11,7 @@ const {
 } = require("./controllers/articles-controllers");
 const {
   getCommentsByArticleId,
+  postCommentByArticleId,
 } = require("./controllers/comments-controllers");
 
 app.get("/api", (request, response) => {
@@ -20,6 +23,8 @@ app.get("/api/articles", getArticles);
 app.get("/api/articles/:article_id", getArticleById);
 app.get("/api/articles/:article_id/comments", getCommentsByArticleId);
 
+app.post("/api/articles/:article_id/comments", postCommentByArticleId);
+
 app.all("/*", (request, response) => {
   response.status(404).send({ msg: "Not Found" });
 });
@@ -27,6 +32,22 @@ app.all("/*", (request, response) => {
 app.use((err, request, response, next) => {
   if (err.code === "22P02") {
     response.status(400).send({ msg: "Bad request" });
+  } else {
+    next(err);
+  }
+});
+
+app.use((err, request, response, next) => {
+  if (err.code === "23503" && err.constraint.endsWith("article_id_fkey")) {
+    response.status(400).send({ msg: "Article Not Found" });
+  } else {
+    next(err);
+  }
+});
+
+app.use((err, request, response, next) => {
+  if (err.code === "23503" && err.constraint.endsWith("author_fkey")) {
+    response.status(400).send({ msg: "Invalid Username" });
   } else {
     next(err);
   }
