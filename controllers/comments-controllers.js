@@ -1,5 +1,8 @@
 const { selectArticleById } = require("../models/articles-models");
-const { selectCommentsByArticleId } = require("../models/comments-models");
+const {
+  selectCommentsByArticleId,
+  insertCommentByArticleId,
+} = require("../models/comments-models");
 
 exports.getCommentsByArticleId = (request, response, next) => {
   const { article_id } = request.params;
@@ -13,6 +16,38 @@ exports.getCommentsByArticleId = (request, response, next) => {
     .then((results) => {
       const comments = results[0];
       response.status(200).send({ comments });
+    })
+    .catch((err) => {
+      next(err);
+    });
+};
+
+exports.postCommentByArticleId = (request, response, next) => {
+  const { article_id } = request.params;
+  const username = request.body.username;
+  const newComment = request.body.comment;
+
+  if (username === undefined || newComment == undefined) {
+    return Promise.reject({
+      status: 400,
+      msg: "Comment must have both username and body properties",
+    }).catch((err) => {
+      next(err);
+    });
+  }
+
+  if (typeof newComment !== "string") {
+    return Promise.reject({
+      status: 400,
+      msg: "Invalid Comment Type",
+    }).catch((err) => {
+      next(err);
+    });
+  }
+
+  insertCommentByArticleId(article_id, username, newComment)
+    .then((returnedComment) => {
+      response.status(201).send({ returnedComment });
     })
     .catch((err) => {
       next(err);
