@@ -122,26 +122,33 @@ ticket 6 GET api/articles/:article_id/comments
 Ticket 7 POST api/articles/:article_id/comments
 
 app.post("/api/articles/:article_id/comments", postCommentByArticleId);
-    update test suite
-        200 status
-        add a comment by article ID
-            request body takes an object:
-                username
-                body
-            responds with:
-                the posted comment
-        200 when good article but no comments
-        ERRORS:
-        400
-        404
-    update app:
-        import controller
-            invoke controller
-    update controller
-        export function
-        import model
-    update models
-        export function
+/    update test suite
+/        201 status
+/        add a comment by article ID
+/            request body takes an object:
+/                username
+/                body
+/                    sends to controller
+/                    sends to model which does insert
+/            responds with:
+/                the posted comment
+/        201 when good article and adds comment
+
+/        ERRORS:
+/        invalid article number
+/        invalid article type
+/        invalid username
+/        404
+
+
+/    update app:
+/        import controller
+/            invoke controller
+/    update controller
+/        export function
+/        import model
+/          update models
+/          export function
 
 
     update endpoint.json
