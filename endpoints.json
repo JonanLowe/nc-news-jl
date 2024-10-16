@@ -50,5 +50,12 @@
         "created_at": "2020-10-31T03:03:00.000Z"
     }
   }
+},
+"POST /api/articles/:article_id/comments": {
+  "description": "returns a comment posted to the article in questions",
+  "queries": [],
+  "exampleResponse": {
+      "comment_id": "this is the comment"
+  }
 }
 }
