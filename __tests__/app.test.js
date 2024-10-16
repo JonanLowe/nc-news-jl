@@ -19,7 +19,7 @@ describe("tests GET bad URLs", () => {
   });
 });
 
-describe("tests endpoint /api/topics", () => {
+describe("tests GET endpoint /api/topics", () => {
   test("GET: 200 /api/topics returns an array containing all topics, with properties 'slug' and 'description", () => {
     return request(app)
       .get("/api/topics")
@@ -37,7 +37,7 @@ describe("tests endpoint /api/topics", () => {
   });
 });
 
-describe("test endpoint /api", () => {
+describe("test GET endpoint /api", () => {
   test("GET: 200 responds with an object containing all available endpoints", () => {
     return request(app)
       .get("/api")
@@ -48,7 +48,7 @@ describe("test endpoint /api", () => {
   });
 });
 
-describe("tests endpoint /api/articles/:article_id", () => {
+describe("tests GET endpoint /api/articles/:article_id", () => {
   test("GET: 200 responds with the correct article object, with the correct properties", () => {
     return request(app)
       .get("/api/articles/2")
@@ -85,7 +85,7 @@ describe("tests endpoint /api/articles/:article_id", () => {
   });
 });
 
-describe("tests endpoint /api/articles", () => {
+describe("tests GET endpoint /api/articles", () => {
   test("GET: 200 /api/articles returns an array containing all article objects, with the correct properties including no 'body' property, sorted by date in descending order", () => {
     return request(app)
       .get("/api/articles")
@@ -111,7 +111,7 @@ describe("tests endpoint /api/articles", () => {
   });
 });
 
-describe("tests endpoint api/articles/:article_id/comments", () => {
+describe("tests GET endpoint api/articles/:article_id/comments", () => {
   test("GET: 200 /api/articles/:article_id/comments serves an array of all comments for a selected article based on ID", () => {
     return request(app)
       .get("/api/articles/1/comments")
@@ -155,6 +155,204 @@ describe("tests endpoint api/articles/:article_id/comments", () => {
       .expect(400)
       .then(({ body: { msg } }) => {
         expect(msg).toBe("Bad request");
+      });
+  });
+});
+
+describe("tests POST endpoint api/articles/:articleid/comments", () => {
+  test("POST: 201 responds with a new comment when posting a comment from an existing user, to an existing article with no comments and increases comment count of the correct article", () => {
+    const testComment = {
+      username: "rogersop",
+      comment: "I like it a bit, but not loads",
+    };
+    const countComments = () => {
+      return request(app).get("/api/articles/2/comments");
+    };
+    return request(app)
+      .post("/api/articles/2/comments")
+      .send(testComment)
+      .expect(201)
+      .then(({ body: { returnedComment } }) => {
+        expect(returnedComment).toMatchObject({
+          article_id: 2,
+          author: "rogersop",
+          body: "I like it a bit, but not loads",
+          comment_id: 19,
+          created_at: expect.any(String),
+        });
+      })
+      .then(() => {
+        return countComments();
+      })
+      .then(({ body: { comments } }) => {
+        expect(comments.length).toBe(1);
+      });
+  });
+  test("POST: 201 responds with a new comment when posting a comment from an existing user, to an existing article which has comments already, and increases comment count of the correct article", () => {
+    const testComment = {
+      username: "icellusedkars",
+      comment: "I like this one more",
+    };
+
+    const countComments = () => {
+      return request(app).get("/api/articles/1/comments");
+    };
+
+    return request(app)
+      .post("/api/articles/1/comments")
+      .send(testComment)
+      .expect(201)
+      .then(({ body: { returnedComment } }) => {
+        expect(returnedComment).toMatchObject({
+          article_id: 1,
+          author: "icellusedkars",
+          body: "I like this one more",
+          comment_id: 19,
+          created_at: expect.any(String),
+        });
+      })
+      .then(() => {
+        return countComments();
+      })
+      .then(({ body: { comments } }) => {
+        expect(comments.length).toBe(12);
+      });
+  });
+  test("POST: 201 posts and responds with a correct comment when extra keys are also present on the comment object", () => {
+    const testComment = {
+      username: "icellusedkars",
+      spareKey1: [],
+      comment: "One does not simply walk into Mordor",
+      anotherKey: 500,
+    };
+    return request(app)
+      .post("/api/articles/1/comments")
+      .send(testComment)
+      .expect(201)
+      .then(({ body: { returnedComment } }) => {
+        expect(returnedComment).toMatchObject({
+          article_id: 1,
+          author: "icellusedkars",
+          body: "One does not simply walk into Mordor",
+          comment_id: 19,
+          created_at: expect.any(String),
+        });
+      });
+  });
+  test("POST: 400 responds with 'Article Not Found' when request is made with a valid but non-existent article id", () => {
+    const testComment = {
+      username: "icellusedkars",
+      comment: "I like this one more",
+    };
+    return request(app)
+      .post("/api/articles/500/comments")
+      .send(testComment)
+      .expect(400)
+      .then(({ body: { msg } }) => {
+        expect(msg).toBe("Article Not Found");
+      });
+  });
+  test("POST: 400 responds with 'Bad request' when request is made with an invalid article id", () => {
+    const testComment = {
+      username: "icellusedkars",
+      comment: "I like this one more",
+    };
+    return request(app)
+      .post("/api/articles/not-a-number/comments")
+      .send(testComment)
+      .expect(400)
+      .then(({ body: { msg } }) => {
+        expect(msg).toBe("Bad request");
+      });
+  });
+  test("POST: 400 responds with 'Invalid Username' when username is a string that does not match a user from the users database", () => {
+    const testComment = {
+      username: "not_a_user",
+      comment: "I'm_not_a_user",
+    };
+    return request(app)
+      .post("/api/articles/1/comments")
+      .send(testComment)
+      .expect(400)
+      .then(({ body: { msg } }) => {
+        expect(msg).toBe("Invalid Username");
+      });
+  });
+  test("POST: 400 responds with 'Invalid Username' when username is an empty string", () => {
+    const testComment = {
+      username: "",
+      comment: "I'm__also_not_a_user",
+    };
+    return request(app)
+      .post("/api/articles/1/comments")
+      .send(testComment)
+      .expect(400)
+      .then(({ body: { msg } }) => {
+        expect(msg).toBe("Invalid Username");
+      });
+  });
+  test("POST: 400 responds with 'Invalid Username' when username is an invalid data type", () => {
+    const testComment = {
+      username: 6,
+      comment: "COMMENT",
+    };
+    return request(app)
+      .post("/api/articles/1/comments")
+      .send(testComment)
+      .expect(400)
+      .then(({ body: { msg } }) => {
+        expect(msg).toBe("Invalid Username");
+      });
+  });
+  test("POST: 400 responds with 'Comment cannot be blank' when an empty string is posted as a comment", () => {
+    const testComment = {
+      username: "icellusedkars",
+      comment: "",
+    };
+    return request(app)
+      .post("/api/articles/1/comments")
+      .send(testComment)
+      .expect(400)
+      .then(({ body: { msg } }) => {
+        expect(msg).toBe("Comment cannot be blank");
+      });
+  });
+  test("POST: 400 responds with 'Invalid Comment' when comment is an invalid data type", () => {
+    commentBody = [];
+    const testComment = {
+      username: "icellusedkars",
+      comment: commentBody,
+    };
+    return request(app)
+      .post("/api/articles/1/comments")
+      .send(testComment)
+      .expect(400)
+      .then(({ body: { msg } }) => {
+        expect(msg).toBe("Invalid Comment Type");
+      });
+  });
+  test("POST: 400 responds with 'Comment must have both username and body properties' when username is not present", () => {
+    const testComment = {
+      body: "Expecto Patronum!",
+    };
+    return request(app)
+      .post("/api/articles/1/comments")
+      .send(testComment)
+      .expect(400)
+      .then(({ body: { msg } }) => {
+        expect(msg).toBe("Comment must have both username and body properties");
+      });
+  });
+  test("POST: 400 responds with 'Comment must have both username and body properties' when body is not present", () => {
+    const testComment = {
+      username: "lurker",
+    };
+    return request(app)
+      .post("/api/articles/1/comments")
+      .send(testComment)
+      .expect(400)
+      .then(({ body: { msg } }) => {
+        expect(msg).toBe("Comment must have both username and body properties");
       });
   });
 });
