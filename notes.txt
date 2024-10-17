@@ -208,18 +208,18 @@ ticket 10 GET api/users/
             name: string
             avatar_url: string
 
-   update app to include apt. endpoint
-        api/users
-        import controller function
-    update controller function
-        import model
-        invoke model
+/   update app to include apt. endpoint
+/        api/users
+/        import controller function
+/    add new controller file for users
+/    update controller function
+/        import model
+/        invoke model
            catch errors
-            export controller
-    update model function
-        export model
-           all users
-            artciles sorted by date descending
-            no body property
+/          export controller
+/    add new model file for users
+/    update model function
+/        export model
+/           all users
 
   update endpoints.json
