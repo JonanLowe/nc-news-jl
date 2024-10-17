@@ -80,7 +80,7 @@ describe("tests GET endpoint /api/articles/:article_id", () => {
       .get("/api/articles/not-a-number")
       .expect(400)
       .then(({ body: { msg } }) => {
-        expect(msg).toBe("Bad request");
+        expect(msg).toBe("Bad Request");
       });
   });
 });
@@ -154,7 +154,7 @@ describe("tests GET endpoint api/articles/:article_id/comments", () => {
       .get("/api/articles/not-a-number/comments")
       .expect(400)
       .then(({ body: { msg } }) => {
-        expect(msg).toBe("Bad request");
+        expect(msg).toBe("Bad Request");
       });
   });
 });
@@ -239,7 +239,7 @@ describe("tests POST endpoint api/articles/:articleid/comments", () => {
         });
       });
   });
-  test("POST: 400 responds with 'Article Not Found' when request is made with a valid but non-existent article id", () => {
+  test("POST: 404 responds with 'Article Not Found' when request is made with a valid but non-existent article id", () => {
     const testComment = {
       username: "icellusedkars",
       comment: "I like this one more",
@@ -247,12 +247,12 @@ describe("tests POST endpoint api/articles/:articleid/comments", () => {
     return request(app)
       .post("/api/articles/500/comments")
       .send(testComment)
-      .expect(400)
+      .expect(404)
       .then(({ body: { msg } }) => {
         expect(msg).toBe("Article Not Found");
       });
   });
-  test("POST: 400 responds with 'Bad request' when request is made with an invalid article id", () => {
+  test("POST: 400 responds with 'Bad Request' when request is made with an invalid article id", () => {
     const testComment = {
       username: "icellusedkars",
       comment: "I like this one more",
@@ -262,7 +262,7 @@ describe("tests POST endpoint api/articles/:articleid/comments", () => {
       .send(testComment)
       .expect(400)
       .then(({ body: { msg } }) => {
-        expect(msg).toBe("Bad request");
+        expect(msg).toBe("Bad Request");
       });
   });
   test("POST: 400 responds with 'Invalid Username' when username is a string that does not match a user from the users database", () => {
@@ -353,6 +353,155 @@ describe("tests POST endpoint api/articles/:articleid/comments", () => {
       .expect(400)
       .then(({ body: { msg } }) => {
         expect(msg).toBe("Comment must have both username and body properties");
+      });
+  });
+});
+
+describe("tests PATCH endpoint api/articles/:articleid", () => {
+  test("PATCH: 200 responds with an updated article with an increased vote count when passed an article with 'votes' property, and a positive integer", () => {
+    const newVote = 10;
+    const votes = {
+      inc_votes: newVote,
+    };
+    return request(app)
+      .patch("/api/articles/1")
+      .send(votes)
+      .expect(200)
+      .then(({ body: { article } }) => {
+        expect(article).toMatchObject({
+          article_id: 1,
+          title: "Living in the shadow of a great man",
+          topic: "mitch",
+          author: "butter_bridge",
+          body: "I find this existence challenging",
+          created_at: expect.any(String),
+          votes: 110,
+          author: expect.any(String),
+          article_img_url:
+            "https://images.pexels.com/photos/158651/news-newsletter-newspaper-information-158651.jpeg?w=700&h=700",
+        });
+      });
+  });
+  test("PATCH: 200 responds with an updated article with a decreased vote count when passed an article with a 'votes' property and a negative integer", () => {
+    const newVote = -40;
+    const votes = {
+      inc_votes: newVote,
+    };
+    return request(app)
+      .patch("/api/articles/1")
+      .send(votes)
+      .expect(200)
+      .then(({ body: { article } }) => {
+        expect(article).toMatchObject({
+          article_id: 1,
+          title: "Living in the shadow of a great man",
+          topic: "mitch",
+          author: "butter_bridge",
+          body: "I find this existence challenging",
+          created_at: expect.any(String),
+          votes: 60,
+          author: expect.any(String),
+          article_img_url:
+            "https://images.pexels.com/photos/158651/news-newsletter-newspaper-information-158651.jpeg?w=700&h=700",
+        });
+      });
+  });
+  test("PATCH: 200 responds with an updated article with an increased vote count when passed an article with a votes property and a positive integer, along with extra properties", () => {
+    const newVote = 50;
+    const votes = {
+      cheeses: ["cheddar", "gouda", "emmental", "stilton", "brie"],
+      inc_votes: newVote,
+      aNumber: 4,
+    };
+    return request(app)
+      .patch("/api/articles/1")
+      .send(votes)
+      .expect(200)
+      .then(({ body: { article } }) => {
+        expect(article).toMatchObject({
+          article_id: 1,
+          title: "Living in the shadow of a great man",
+          topic: "mitch",
+          author: "butter_bridge",
+          body: "I find this existence challenging",
+          created_at: expect.any(String),
+          votes: 150,
+          author: expect.any(String),
+          article_img_url:
+            "https://images.pexels.com/photos/158651/news-newsletter-newspaper-information-158651.jpeg?w=700&h=700",
+        });
+      });
+  });
+  test("PATCH: 200 responds with an updated article with a new votes property with the value of 'newVote' when passed an article without a 'votes' property and an integer", () => {
+    const newVote = 10;
+    const votes = {
+      inc_votes: newVote,
+    };
+    return request(app)
+      .patch("/api/articles/6")
+      .send(votes)
+      .expect(200)
+      .then(({ body: { article } }) => {
+        expect(article).toMatchObject({
+          article_id: 6,
+          title: "A",
+          topic: "mitch",
+          author: "icellusedkars",
+          body: "Delicious tin of cat food",
+          created_at: expect.any(String),
+          votes: newVote,
+          article_img_url:
+            "https://images.pexels.com/photos/158651/news-newsletter-newspaper-information-158651.jpeg?w=700&h=700",
+        });
+      });
+  });
+  test("PATCH: 404 responds with 'Article Not Found' when request is made with a valid but non-existant article id", () => {
+    const newVote = -40;
+    const votes = {
+      inc_votes: newVote,
+    };
+    return request(app)
+      .patch("/api/articles/600000")
+      .send(votes)
+      .expect(404)
+      .then(({ body: { msg } }) => {
+        expect(msg).toBe("Article Not Found");
+      });
+  });
+  test("PATCH: 400 responds with 'Bad Request' when request is made with an invalid article id", () => {
+    const newVote = -40;
+    const votes = {
+      inc_votes: newVote,
+    };
+    return request(app)
+      .patch("/api/articles/not-a-number")
+      .send(votes)
+      .expect(400)
+      .then(({ body: { msg } }) => {
+        expect(msg).toBe("Bad Request");
+      });
+  });
+  test("PATCH: 400 responds with 'Votes must be a number' when votes is not a number", () => {
+    const newVote = "not-a-number";
+    const votes = {
+      inc_votes: newVote,
+    };
+    return request(app)
+      .patch("/api/articles/1")
+      .send(votes)
+      .expect(400)
+      .then(({ body: { msg } }) => {
+        expect(msg).toBe("Votes must be a valid number");
+      });
+  });
+  test("PATCH: 400 responds with 'Votes must be a number' when request is made with no votes key", () => {
+    const votes = {};
+    return request(app)
+      .patch("/api/articles/1")
+      .send(votes)
+      .expect(400)
+      .then(({ body: { msg } }) => {
+        expect(msg).toBe("Votes must be a valid number");
       });
   });
 });

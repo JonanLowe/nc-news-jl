@@ -8,6 +8,7 @@ const { getTopics } = require("./controllers/topics-controllers");
 const {
   getArticles,
   getArticleById,
+  patchVotesByArticleId,
 } = require("./controllers/articles-controllers");
 const {
   getCommentsByArticleId,
@@ -25,13 +26,15 @@ app.get("/api/articles/:article_id/comments", getCommentsByArticleId);
 
 app.post("/api/articles/:article_id/comments", postCommentByArticleId);
 
+app.patch("/api/articles/:article_id", patchVotesByArticleId);
+
 app.all("/*", (request, response) => {
   response.status(404).send({ msg: "Not Found" });
 });
 
 app.use((err, request, response, next) => {
   if (err.code === "22P02") {
-    response.status(400).send({ msg: "Bad request" });
+    response.status(400).send({ msg: "Bad Request" });
   } else {
     next(err);
   }
@@ -39,7 +42,7 @@ app.use((err, request, response, next) => {
 
 app.use((err, request, response, next) => {
   if (err.code === "23503" && err.constraint.endsWith("article_id_fkey")) {
-    response.status(400).send({ msg: "Article Not Found" });
+    response.status(404).send({ msg: "Article Not Found" });
   } else {
     next(err);
   }

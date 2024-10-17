@@ -52,10 +52,23 @@
   }
 },
 "POST /api/articles/:article_id/comments": {
-  "description": "returns a comment posted to the article in questions",
+  "description": "serves a new comment posted to the specified article",
   "queries": [],
   "exampleResponse": {
       "comment_id": "this is the comment"
+  }
+},
+"PATCH /api/articles/:article_id": {
+  "description": "serves an article based on the specified id, with an updated vote count",
+  "queries": [],
+  "exampleResponse": {
+    "title": "Eight pug gifs that remind me of mitch",
+    "topic": "mitch",
+    "author": "icellusedkars",
+    "body": "some gifs",
+    "created_at": 1604394720000,
+    "article_img_url":
+      "https://images.pexels.com/photos/158651/news-newsletter-newspaper-information-158651.jpeg?w=700&h=700"
   }
 }
 }
