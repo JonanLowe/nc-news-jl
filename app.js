@@ -13,6 +13,7 @@ const {
 const {
   getCommentsByArticleId,
   postCommentByArticleId,
+  deleteCommentById,
 } = require("./controllers/comments-controllers");
 
 app.get("/api", (request, response) => {
@@ -27,6 +28,8 @@ app.get("/api/articles/:article_id/comments", getCommentsByArticleId);
 app.post("/api/articles/:article_id/comments", postCommentByArticleId);
 
 app.patch("/api/articles/:article_id", patchVotesByArticleId);
+
+app.delete("/api/comments/:comment_id", deleteCommentById);
 
 app.all("/*", (request, response) => {
   response.status(404).send({ msg: "Not Found" });
