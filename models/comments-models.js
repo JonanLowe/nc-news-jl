@@ -19,14 +19,14 @@ exports.insertCommentByArticleId = (article_id, username, newComment) => {
     return Promise.reject({
       status: 400,
       msg: "Comment must have both username and body properties",
-    })
+    });
   }
 
   if (typeof newComment !== "string") {
     return Promise.reject({
       status: 400,
       msg: "Invalid Comment Type",
-    })
+    });
   }
 
   return db
