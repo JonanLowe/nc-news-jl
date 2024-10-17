@@ -175,4 +175,28 @@ app.PATCH("/api/articles/:article_id/comments", postCommentByArticleId);
 /        import model
 /          update models
 /          export function
-    update endpoint.json
+/    update endpoint.json
+
+Ticket 9 DELETE /api/commets/:comment_id
+
+app.DELETE("api/comments/:comment_id)
+/    update test suite
+/        204 status, no content
+/        errors:
+/        400 invalid comment id
+/        404 comment not found
+/            - might be covered by 23503
+/    update app:
+/        import controller
+/            invoke controller
+/    update comments-controllers
+/        export controller
+/        import model
+/            invoke model]
+/    update model
+/        return db.query
+/            DELETE comment where commentid = commentID
+
+    update endpoints.json
+
+
