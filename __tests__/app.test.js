@@ -111,7 +111,7 @@ describe("tests GET endpoint /api/articles", () => {
   });
 });
 
-describe("tests GET endpoint api/articles/:article_id/comments", () => {
+describe("tests GET endpoint /api/articles/:article_id/comments", () => {
   test("GET: 200 /api/articles/:article_id/comments serves an array of all comments for a selected article based on ID", () => {
     return request(app)
       .get("/api/articles/1/comments")
@@ -159,7 +159,7 @@ describe("tests GET endpoint api/articles/:article_id/comments", () => {
   });
 });
 
-describe("tests POST endpoint api/articles/:articleid/comments", () => {
+describe("tests POST endpoint /api/articles/:articleid/comments", () => {
   test("POST: 201 responds with a new comment when posting a comment from an existing user, to an existing article with no comments and increases comment count of the correct article", () => {
     const testComment = {
       username: "rogersop",
@@ -344,7 +344,7 @@ describe("tests POST endpoint api/articles/:articleid/comments", () => {
   });
 });
 
-describe("tests PATCH endpoint api/articles/:articleid", () => {
+describe("tests PATCH endpoint /api/articles/:articleid", () => {
   test("PATCH: 200 responds with an updated article with an increased vote count when passed an article with 'votes' property, and a positive integer", () => {
     const newVote = 10;
     const votes = {
@@ -493,7 +493,7 @@ describe("tests PATCH endpoint api/articles/:articleid", () => {
   });
 });
 
-describe("Tests DELETE endpoint /api/comments/comment:id", () => {
+describe("tests DELETE endpoint /api/comments/comment:id", () => {
   test("DELETE: 204 deletes a specified comment, reducing the number of comments for that article in the database", () => {
     const countComments = () => {
       return request(app).get("/api/articles/9/comments");
@@ -532,6 +532,25 @@ describe("Tests DELETE endpoint /api/comments/comment:id", () => {
       .expect(400)
       .then(({ body: { msg } }) => {
         expect(msg).toBe("Bad Request");
+      });
+  });
+});
+
+describe("tests GET endpoint /api/users", () => {
+  test("GET:200 /api/users serves an array containing all users, with properties username, name, avatar_url", () => {
+    return request(app)
+      .get("/api/users")
+      .expect(200)
+      .then(({ body: { users } }) => {
+        expect(users).toBeInstanceOf(Array);
+        expect(users.length).toBe(4);
+        users.forEach((user) => {
+          expect(user).toMatchObject({
+            username: expect.any(String),
+            name: expect.any(String),
+            avatar_url: expect.any(String),
+          });
+        });
       });
   });
 });
