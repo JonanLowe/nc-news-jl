@@ -15,6 +15,20 @@ exports.selectCommentsByArticleId = (article_id) => {
 };
 
 exports.insertCommentByArticleId = (article_id, username, newComment) => {
+  if (username === undefined || newComment == undefined) {
+    return Promise.reject({
+      status: 400,
+      msg: "Comment must have both username and body properties",
+    })
+  }
+
+  if (typeof newComment !== "string") {
+    return Promise.reject({
+      status: 400,
+      msg: "Invalid Comment Type",
+    })
+  }
+
   return db
     .query(
       `INSERT INTO comments

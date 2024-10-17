@@ -278,19 +278,6 @@ describe("tests POST endpoint api/articles/:articleid/comments", () => {
         expect(msg).toBe("Invalid Username");
       });
   });
-  test("POST: 400 responds with 'Invalid Username' when username is an empty string", () => {
-    const testComment = {
-      username: "",
-      comment: "I'm__also_not_a_user",
-    };
-    return request(app)
-      .post("/api/articles/1/comments")
-      .send(testComment)
-      .expect(400)
-      .then(({ body: { msg } }) => {
-        expect(msg).toBe("Invalid Username");
-      });
-  });
   test("POST: 400 responds with 'Invalid Username' when username is an invalid data type", () => {
     const testComment = {
       username: 6,

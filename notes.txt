@@ -17,10 +17,10 @@ set up test suite
 /       data
 /    beforeeach/afterall
     test first endpoint /api/topics
-//        200 status
-//        returns an array
-        array contains objects
-        objects have correct properties
+/        200 status
+/        returns an array
+/        array contains objects
+/        objects have correct properties
 
 create app.js
 /    install & require express
@@ -197,6 +197,29 @@ app.DELETE("api/comments/:comment_id)
 /        return db.query
 /            DELETE comment where commentid = commentID
 
-    update endpoints.json
+/    update endpoints.json
 
+ticket 10 GET api/users/
+    update test suite
+        200 status
+        all users
+        properties: 
+            username: string
+            name: string
+            avatar_url: string
 
+   update app to include apt. endpoint
+        api/users
+        import controller function
+    update controller function
+        import model
+        invoke model
+           catch errors
+            export controller
+    update model function
+        export model
+           all users
+            artciles sorted by date descending
+            no body property
+
+  update endpoints.json
