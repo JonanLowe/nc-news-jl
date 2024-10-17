@@ -65,8 +65,6 @@
     }]
 
   },
-
-
 "POST /api/articles/:article_id/comments": {
   "description": "serves a new comment posted to the specified article",
   "queries": [],
