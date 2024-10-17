@@ -29,3 +29,20 @@ exports.selectArticleById = (article_id) => {
       return result.rows[0];
     });
 };
+
+exports.setVotesByArticleId = (article_id, inc_votes) => {
+  return db
+    .query(
+      `UPDATE articles
+      SET votes = votes + $2
+      WHERE article_id = $1 RETURNING*
+      `,
+      [article_id, inc_votes]
+    )
+    .then((result) => {
+      if (result.rowCount < 1) {
+        return Promise.reject({ status: 404, msg: "Article Not Found" });
+      }
+      return result.rows[0];
+    });
+};
