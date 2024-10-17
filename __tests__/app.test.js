@@ -505,3 +505,46 @@ describe("tests PATCH endpoint api/articles/:articleid", () => {
       });
   });
 });
+
+describe("Tests DELETE endpoint /api/comments/comment:id", () => {
+  test("DELETE: 204 deletes a specified comment, reducing the number of comments for that article in the database", () => {
+    const countComments = () => {
+      return request(app).get("/api/articles/9/comments");
+    };
+
+    return countComments()
+      .then(({ body: { comments } }) => {
+        expect(comments.length).toBe(2);
+      })
+      .then(() => {
+        return request(app)
+          .delete("/api/comments/1")
+          .expect(204)
+          .then((response) => {
+            expect(response.noContent).toBe(true);
+          })
+          .then(() => {
+            return countComments();
+          })
+          .then(({ body: { comments } }) => {
+            expect(comments.length).toBe(1);
+          });
+      });
+  });
+  test("DELETE: 400 returns 'Comment Not Found' when given a valid comment id that is not in the database", () => {
+    return request(app)
+      .delete("/api/comments/200")
+      .expect(400)
+      .then(({ body: { msg } }) => {
+        expect(msg).toBe("Comment Not Found");
+      });
+  });
+  test("DELETE 404: returns 'Bad Request' when given an invalid comment id", () => {
+    return request(app)
+      .delete("/api/comments/not-a-number")
+      .expect(400)
+      .then(({ body: { msg } }) => {
+        expect(msg).toBe("Bad Request");
+      });
+  });
+});
