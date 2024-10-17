@@ -133,14 +133,11 @@ app.post("/api/articles/:article_id/comments", postCommentByArticleId);
 /            responds with:
 /                the posted comment
 /        201 when good article and adds comment
-
 /        ERRORS:
 /        invalid article number
 /        invalid article type
 /        invalid username
 /        404
-
-
 /    update app:
 /        import controller
 /            invoke controller
@@ -149,7 +146,33 @@ app.post("/api/articles/:article_id/comments", postCommentByArticleId);
 /        import model
 /          update models
 /          export function
-
 /    update endpoint.json
 
 
+Ticket 8 PATCH api/articles/:article_id
+
+app.PATCH("/api/articles/:article_id/comments", postCommentByArticleId);
+/    update test suite
+/        200 status
+/        increment VOTEs article ID
+/            request body takes an object:
+/                inc_votes
+/                    sends to controller
+/                    sends to model which does insert
+/            responds with:
+/                updated artcile
+/        200 when good article and updates votes
+/        ERRORS:
+/        404  invalid article number
+/        400  invalid article type
+/        blank vote
+/        invalid data type vote
+/    update app:
+/        import controller
+/            invoke controller
+/    update controller
+/        export function
+/        import model
+/          update models
+/          export function
+    update endpoint.json
