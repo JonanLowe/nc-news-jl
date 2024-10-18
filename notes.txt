@@ -200,13 +200,13 @@ app.DELETE("api/comments/:comment_id)
 /    update endpoints.json
 
 ticket 10 GET api/users/
-    update test suite
-        200 status
-        all users
-        properties: 
-            username: string
-            name: string
-            avatar_url: string
+/    update test suite
+/        200 status
+/        all users
+/        properties: 
+/            username: string
+/            name: string
+/            avatar_url: string
 
 /   update app to include apt. endpoint
 /        api/users
@@ -222,4 +222,17 @@ ticket 10 GET api/users/
 /        export model
 /           all users
 
-  update endpoints.json
+/  update endpoints.json
+
+ticket 11 GET /api/articles SORTING
+
+/update test suite
+    sort by any valid column (defaults to created_at)
+    order set to asc or desc defaults to desc
+        GREENLIST VALID QUERIES
+        AVOID SQL INJECTION
+    consider errors
+    update controller
+    update model
+
+    update endpoints.json
