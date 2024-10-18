@@ -109,6 +109,145 @@ describe("tests GET endpoint /api/articles", () => {
         });
       });
   });
+  test("GET: 200 /api/articles?sort_by=comment_count returns the articles sorted by specified query (comment_count), and defaults to descending order when no second query is passed", () => {
+    return request(app)
+      .get("/api/articles?sort_by=comment_count")
+      .expect(200)
+      .then(({ body: { articles } }) => {
+        expect(articles).toHaveLength(13);
+        expect(articles).toBeSortedBy("comment_count", { descending: true });
+      });
+  });
+  test("GET: 200 /api/articles?sort_by=comment_count&order=asc returns the articles sorted by comment_count, in ascending order", () => {
+    return request(app)
+      .get("/api/articles?sort_by=comment_count&order=asc")
+      .expect(200)
+      .then(({ body: { articles } }) => {
+        expect(articles).toHaveLength(13);
+        expect(articles).toBeSortedBy("comment_count", { ascending: true });
+      });
+  });
+  describe("GET: 200 tests other valid category endpoints", () => {
+    test("GET 200: api/articles/?sort_by=author", () => {
+      return request(app)
+        .get("/api/articles?sort_by=author")
+        .expect(200)
+        .then(({ body: { articles } }) => {
+          expect(articles).toBeSortedBy("author", { descending: true });
+        });
+    });
+    test("GET 200: api/articles/?sort_by=title", () => {
+      return request(app)
+        .get("/api/articles?sort_by=title")
+        .expect(200)
+        .then(({ body: { articles } }) => {
+          expect(articles).toBeSortedBy("title", { descending: true });
+        });
+    });
+    test("GET 200: api/articles/?sort_by=topic", () => {
+      return request(app)
+        .get("/api/articles?sort_by=topic")
+        .expect(200)
+        .then(({ body: { articles } }) => {
+          expect(articles).toBeSortedBy("topic", { descending: true });
+        });
+    });
+    test("GET 200: api/articles/?sort_by=created_at", () => {
+      return request(app)
+        .get("/api/articles?sort_by=created_at")
+        .expect(200)
+        .then(({ body: { articles } }) => {
+          expect(articles).toBeSortedBy("created_at", { descending: true });
+        });
+    });
+    test("GET 200: api/articles/?sort_by=article_img_url", () => {
+      return request(app)
+        .get("/api/articles?sort_by=article_img_url")
+        .expect(200)
+        .then(({ body: { articles } }) => {
+          expect(articles).toBeSortedBy("article_img_url", {
+            descending: true,
+          });
+        });
+    });
+    test("GET 200: api/articles/?sort_by=votes", () => {
+      return request(app)
+        .get("/api/articles?sort_by=votes")
+        .expect(200)
+        .then(({ body: { articles } }) => {
+          expect(articles).toBeSortedBy("votes", {
+            descending: true,
+          });
+        });
+    });
+  });
+  test("GET: 200 /api/articles?order=asc returns articles sorted ascending by default category when passed an only 'order' in the query", () => {
+    return request(app)
+      .get("/api/articles?order=asc")
+      .expect(200)
+      .then(({ body: { articles } }) => {
+        expect(articles).toBeSortedBy("created_at", { ascending: true });
+      });
+  });
+  test("GET: 400 /api/articles?sort_by=not_a_category returns 'Bad Request' when querying sort_by an invalid category", () => {
+    return request(app)
+      .get("/api/articles?sort_by=not_a_category")
+      .expect(400)
+      .then(({ body: { msg } }) => {
+        expect(msg).toBe("Bad Request");
+      });
+  });
+  test("GET: 400 /api/articles?order=not_asc_or_desc returns 'Bad Request' when querying order by an invalid order", () => {
+    return request(app)
+      .get("/api/articles?sort_by=author&order=not_asc_or_desc")
+      .expect(400)
+      .then(({ body: { msg } }) => {
+        expect(msg).toBe("Bad Request");
+      });
+  });
+  test("GET: 400 /api/articles?sort_by=author&sort_by=title returns 'Bad Request' when passed the same query multiple times", () => {
+    return request(app)
+      .get("/api/articles?sort_by=author&sort_by=title")
+      .expect(400)
+      .then(({ body: { msg } }) => {
+        expect(msg).toBe("Bad Request");
+      });
+  });
+  test("GET: 400 /api/articles?who=author&order=asc returns 'Bad Request' when passed an invalid query", () => {
+    return request(app)
+      .get("/api/articles?who=author&order=asc")
+      .expect(400)
+      .then(({ body: { msg } }) => {
+        expect(msg).toBe("Bad Request");
+      });
+  });
+  test("GET: 400 /api/articles?sort_by=author;`DELETE * FROM comments`, responds with 400 and an error message when presented with SQL injection", () => {
+    return request(app)
+      .get("/api/articles?sort_by=author;`DELETE * FROM comments`")
+      .expect(400)
+      .then(({ body: { msg } }) => {
+        expect(msg).toBe("Bad Request");
+      });
+  });
+});
+
+describe("tests GET endpoint /api/users", () => {
+  test("GET:200 /api/users serves an array containing all users, with properties username, name, avatar_url", () => {
+    return request(app)
+      .get("/api/users")
+      .expect(200)
+      .then(({ body: { users } }) => {
+        expect(users).toBeInstanceOf(Array);
+        expect(users.length).toBe(4);
+        users.forEach((user) => {
+          expect(user).toMatchObject({
+            username: expect.any(String),
+            name: expect.any(String),
+            avatar_url: expect.any(String),
+          });
+        });
+      });
+  });
 });
 
 describe("tests GET endpoint /api/articles/:article_id/comments", () => {
@@ -526,31 +665,12 @@ describe("tests DELETE endpoint /api/comments/comment:id", () => {
         expect(msg).toBe("Comment Not Found");
       });
   });
-  test("DELETE 404: returns 'Bad Request' when given an invalid comment id", () => {
+  test("DELETE: 404 returns 'Bad Request' when given an invalid comment id", () => {
     return request(app)
       .delete("/api/comments/not-a-number")
       .expect(400)
       .then(({ body: { msg } }) => {
         expect(msg).toBe("Bad Request");
-      });
-  });
-});
-
-describe("tests GET endpoint /api/users", () => {
-  test("GET:200 /api/users serves an array containing all users, with properties username, name, avatar_url", () => {
-    return request(app)
-      .get("/api/users")
-      .expect(200)
-      .then(({ body: { users } }) => {
-        expect(users).toBeInstanceOf(Array);
-        expect(users.length).toBe(4);
-        users.forEach((user) => {
-          expect(user).toMatchObject({
-            username: expect.any(String),
-            name: expect.any(String),
-            avatar_url: expect.any(String),
-          });
-        });
       });
   });
 });
