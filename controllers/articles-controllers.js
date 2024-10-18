@@ -5,7 +5,15 @@ const {
 } = require("../models/articles-models");
 
 exports.getArticles = (request, response, next) => {
-  selectArticles()
+  const queries = Object.keys(request.query);
+
+  queries.forEach((query) => {
+    if (query !== "sort_by" && query !== "order") {
+      return response.status(400).send({ msg: "Bad Request" });
+    }
+  });
+
+  selectArticles(request.query.sort_by, request.query.order)
     .then((articles) => {
       return articles.map((article) => {
         article.comment_count = Number(article.comment_count);

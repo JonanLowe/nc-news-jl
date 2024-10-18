@@ -1,14 +1,38 @@
 const db = require("../db/connection");
 
-exports.selectArticles = () => {
+exports.selectArticles = (sort_by = "created_at", order = "DESC") => {
+  if (typeof order === "string") {
+    order = order.toUpperCase();
+  }
+
+  const sortByGreenList = [
+    "author",
+    "title",
+    "topic",
+    "created_at",
+    "article_img_url",
+    "comment_count",
+    "votes",
+  ];
+  const orderByGreenlist = ["ASC", "DESC"];
+
+  if (!sortByGreenList.includes(sort_by) || !orderByGreenlist.includes(order)) {
+    return Promise.reject({
+      status: 400,
+      msg: "Bad Request",
+    });
+  }
+
   return db
     .query(
-      `SELECT articles.*, COUNT(comments.article_id) AS comment_count
-       FROM articles
-       LEFT JOIN comments
-       ON articles.article_id = comments.article_id
-       GROUP BY articles.article_id
-       ORDER BY created_at DESC;`
+      `
+    SELECT articles.*,
+    COUNT(comments.article_id) AS comment_count
+    FROM articles
+    LEFT JOIN comments
+    ON articles.article_id = comments.article_id
+    GROUP BY articles.article_id
+    ORDER BY ${sort_by} ${order};`
     )
     .then((result) => {
       return result.rows;
