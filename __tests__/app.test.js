@@ -263,6 +263,17 @@ describe("tests GET endpoint /api/articles/:article_id", () => {
         });
       });
   });
+  test("GET: 200 responds with the correct article object, with properties now including comment_count", () => {
+    return request(app)
+      .get("/api/articles/2")
+      .expect(200)
+      .then(({ body: { article } }) => {
+        expect(article.article_id).toBe(2);
+        expect(article).toMatchObject({
+          comment_count: expect.any(Number),
+        });
+      });
+  });
   test("GET: 404 responds with 'Article Not Found' when request is made with a valid but non-existent id", () => {
     return request(app)
       .get("/api/articles/500")
