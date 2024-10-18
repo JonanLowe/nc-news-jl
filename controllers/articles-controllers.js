@@ -6,14 +6,19 @@ const {
 
 exports.getArticles = (request, response, next) => {
   const queries = Object.keys(request.query);
+  const queriesGreenList = ["sort_by", "order", "topic"];
 
   queries.forEach((query) => {
-    if (query !== "sort_by" && query !== "order") {
+    if (!queriesGreenList.includes(query)) {
       return response.status(400).send({ msg: "Bad Request" });
     }
   });
 
-  selectArticles(request.query.sort_by, request.query.order)
+  selectArticles(
+    request.query.sort_by,
+    request.query.order,
+    request.query.topic
+  )
     .then((articles) => {
       return articles.map((article) => {
         article.comment_count = Number(article.comment_count);
