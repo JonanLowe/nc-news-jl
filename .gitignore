@@ -1,7 +1,7 @@
+*.txt
+
 node_modules
 
 .env.*
-
-notes.txt
 
 scratch.js
