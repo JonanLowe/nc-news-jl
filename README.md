@@ -6,7 +6,7 @@ This API was built to mimic the backend of a real-world information service like
 
 The hosted version of this API can be found here:
 
-    https://nc-news-c2tj.onrender.com
+    https://nc-news-c2tj.onrender.com/api
 
 ## Setup
 
