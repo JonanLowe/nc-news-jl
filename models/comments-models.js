@@ -29,6 +29,13 @@ exports.insertCommentByArticleId = (article_id, username, newComment) => {
     });
   }
 
+  if (newComment.length < 1) {
+    return Promise.reject({
+      status: 400,
+      msg: "Comment cannot be blank",
+    });
+  }
+
   return db
     .query(
       `INSERT INTO comments
@@ -38,9 +45,6 @@ exports.insertCommentByArticleId = (article_id, username, newComment) => {
       [article_id, username, newComment]
     )
     .then(({ rows }) => {
-      if (rows[0].body.length < 1) {
-        return Promise.reject({ status: 400, msg: "Comment cannot be blank" });
-      }
       return rows[0];
     });
 };
