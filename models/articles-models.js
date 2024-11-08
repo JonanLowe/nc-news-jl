@@ -48,6 +48,12 @@ exports.selectArticles = (
   const queryString = queryString1 + queryString2 + queryString3;
 
   return db.query(queryString).then((result) => {
+    if (result.rows < 1) {
+      return Promise.reject({
+        status: 400,
+        msg: "Bad Request - not a valid topic",
+      });
+    }
     return result.rows;
   });
 };
