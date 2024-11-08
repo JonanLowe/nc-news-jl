@@ -10,7 +10,9 @@ exports.getArticles = (request, response, next) => {
 
   queries.forEach((query) => {
     if (!queriesGreenList.includes(query)) {
-      return response.status(400).send({ msg: "Bad Request" });
+      return response
+        .status(400)
+        .send({ msg: "Bad Request- NOT ON THE GREENLIST" });
     }
   });
 

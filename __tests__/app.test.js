@@ -181,7 +181,7 @@ describe("tests GET endpoint /api/articles", () => {
       .get("/api/articles?who=author&order=asc")
       .expect(400)
       .then(({ body: { msg } }) => {
-        expect(msg).toBe("Bad Request");
+        expect(msg).toBe("Bad Request- NOT ON THE GREENLIST");
       });
   });
   test("GET: 400 /api/articles?sort_by=author;`DELETE * FROM comments`, responds with 400 and an error message when presented with SQL injection", () => {
@@ -189,7 +189,7 @@ describe("tests GET endpoint /api/articles", () => {
       .get("/api/articles?sort_by=author;`DELETE * FROM comments`")
       .expect(400)
       .then(({ body: { msg } }) => {
-        expect(msg).toBe("Bad Request");
+        expect(msg).toBe("Bad Request- NOT ON THE GREENLIST");
       });
   });
   test("GET: 200 /api/articles?topic=<topic> responds with all articles of the specified topic", () => {
@@ -210,6 +210,17 @@ describe("tests GET endpoint /api/articles", () => {
       .then(({ body: { articles } }) => {
         expect(articles).toHaveLength(12);
         expect(articles).toBeSortedBy("author", { ascending: true });
+        articles.forEach((article) => {
+          expect(article.topic).toBe("mitch");
+        });
+      });
+  });
+  test("GET: 200 /api/articles?topic=mitch responds with correct articles", () => {
+    return request(app)
+      .get("/api/articles?topic=mitch")
+      .expect(200)
+      .then(({ body: { articles } }) => {
+        expect(articles).toHaveLength(12);
         articles.forEach((article) => {
           expect(article.topic).toBe("mitch");
         });
