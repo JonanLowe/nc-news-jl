@@ -189,7 +189,7 @@ describe("tests GET endpoint /api/articles", () => {
       .get("/api/articles?sort_by=author;`DELETE * FROM comments`")
       .expect(400)
       .then(({ body: { msg } }) => {
-        expect(msg).toBe("Bad Request- NOT ON THE GREENLIST");
+        expect(msg).toBe("Bad Request");
       });
   });
   test("GET: 200 /api/articles?topic=<topic> responds with all articles of the specified topic", () => {
@@ -231,7 +231,7 @@ describe("tests GET endpoint /api/articles", () => {
       .get("/api/articles?topic=not_a_topic")
       .expect(400)
       .then(({ body: { msg } }) => {
-        expect(msg).toBe("Bad Request");
+        expect(msg).toBe("Bad Request - not a valid topic");
       });
   });
 });

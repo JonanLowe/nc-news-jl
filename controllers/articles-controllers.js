@@ -29,6 +29,8 @@ exports.getArticles = (request, response, next) => {
       });
     })
     .then((articles) => {
+      console.log(articles, "<<<articles")
+      console.log({articles}, "{articles}")
       response.status(200).send({ articles });
     })
     .catch((err) => {

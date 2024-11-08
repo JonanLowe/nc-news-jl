@@ -19,13 +19,8 @@ exports.selectArticles = (
     "votes",
   ];
   const orderByGreenlist = ["ASC", "DESC"];
-  const topicsGreenList = ["mitch", "cats", "paper"];
 
-  if (
-    !sortByGreenList.includes(sort_by) ||
-    !orderByGreenlist.includes(order) ||
-    (topic && !topicsGreenList.includes(topic))
-  ) {
+  if (!sortByGreenList.includes(sort_by) || !orderByGreenlist.includes(order)) {
     return Promise.reject({
       status: 400,
       msg: "Bad Request",
