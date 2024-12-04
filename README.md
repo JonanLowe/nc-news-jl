@@ -29,7 +29,7 @@ Add the following files to the root of your project, and add them to .gitignore:
     .env.development
     .end.test
 
-Add this variables .env.development:
+Add this variable to .env.development:
 
      PGDATABASE = nc_news
 
