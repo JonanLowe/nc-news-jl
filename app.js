@@ -36,6 +36,13 @@ app.patch("/api/articles/:article_id", patchVotesByArticleId);
 
 app.delete("/api/comments/:comment_id", deleteCommentById);
 
+
+// link to solution for refresh issue:
+// https://ui.dev/react-router-cannot-get-url-refresh
+// app.get("/*", (request, response) => {
+//   response.status(200).send({ endpoints });
+// });
+
 app.all("/*", (request, response) => {
   response.status(404).send({ msg: "Not Found" });
 });
