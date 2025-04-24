@@ -9,7 +9,7 @@ beforeEach(() => seed(data));
 afterAll(() => db.end());
 
 describe("tests GET bad URLs", () => {
-  test("GET: 404 /badURL returns a 404 error code and a mesage of 'Not Found'", () => {
+  test("GET: 404 /badURL returns a 404 error code and a message of 'Not Found'", () => {
     return request(app)
       .get("/badURL")
       .expect(404)

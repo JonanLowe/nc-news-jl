@@ -39,7 +39,7 @@ Add this variable to .env.test:
 
 To then seed the databases, in your terminal enter:
 
-    npm run seteup-dbs
+    npm run setup-dbs
     npm run seed
 
 ## Testing
